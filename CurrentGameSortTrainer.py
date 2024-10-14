@@ -199,9 +199,17 @@ def single_run_training(tokenized_datasets, model):
     return eval_results
 
 # Cross-validation function
-def cross_validation(tokenized_datasets):
+def cross_validation(tokenized_datasets, model):
     kfold = KFold(n_splits=5, shuffle=True, random_state=42)
     results = []
+
+    # Define a proper data collator function
+    def collate_fn(features):
+        batch = {
+            key: torch.stack([f[key] for f in features]) for key in features[0] if key != 'labels'
+        }
+        batch['labels'] = torch.tensor([f['labels'] for f in features])
+        return batch
 
     for fold, (train_idx, eval_idx) in enumerate(kfold.split(tokenized_datasets['train'])):
         print(f"Fold {fold + 1}")
@@ -239,9 +247,7 @@ def cross_validation(tokenized_datasets):
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
             compute_metrics=compute_metrics,
-            data_collator=lambda data: {
-                key: torch.stack([f[key] for f in data]) for key in data[0] if key != 'labels'
-            },
+            data_collator=collate_fn,  # Use the defined data collator function
             callbacks=[early_stopping]
         )
 
@@ -264,6 +270,7 @@ def cross_validation(tokenized_datasets):
 
     return results
 
+
 # Main function
 def main():
     mode = input("Choose mode (1: Single Run, 2: Cross-Validation): ").strip()
@@ -273,7 +280,7 @@ def main():
         print("Single run results:", single_run_results)
     elif mode == '2':
         print("Starting cross-validation...")
-        cross_val_results = cross_validation(tokenized_datasets)
+        cross_val_results = cross_validation(tokenized_datasets, model)
         print("Cross-validation results:", cross_val_results)
     else:
         print("Invalid choice. Please select 1 or 2.")
