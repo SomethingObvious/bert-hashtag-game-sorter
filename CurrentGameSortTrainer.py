@@ -264,7 +264,19 @@ def cross_validation(tokenized_datasets):
 
     return results
 
-single_run_results = single_run_training(tokenized_datasets, model)
+# Main function
+def main():
+    mode = input("Choose mode (1: Single Run, 2: Cross-Validation): ").strip()
+    if mode == '1':
+        print("Starting single run training...")
+        single_run_results = single_run_training(tokenized_datasets, model)
+        print("Single run results:", single_run_results)
+    elif mode == '2':
+        print("Starting cross-validation...")
+        cross_val_results = cross_validation(tokenized_datasets)
+        print("Cross-validation results:", cross_val_results)
+    else:
+        print("Invalid choice. Please select 1 or 2.")
 
-# Uncomment to run cross-validation
-# cv_results = cross_validation(tokenized_datasets)
+if __name__ == "__main__":
+    main()

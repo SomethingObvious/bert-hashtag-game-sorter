@@ -11,7 +11,7 @@ output_dir = os.path.join(script_dir, '../training_data')
 use_max_samples = True  # Set to False to use the entire dataset
 
 # Maximum number of samples to take
-max_samples = 100
+max_samples = 100000000000000
 
 # Load the dataset
 df = pd.read_csv(input_file)
