@@ -11,6 +11,9 @@ logs/
 saved_model/
 saved_tokenizer/
 
+# ignore .idea
+.idea/
+
 # Ignore cached data (if applicable)
 __pycache__/
 *.pyc
